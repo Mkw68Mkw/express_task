@@ -42,7 +42,7 @@ function ResponsiveHeader({ username, router, setUsername, setShowModal }) {
               <span className="text-gray-600">Eingeloggt als: {username}</span>
               <button
                 onClick={() => router.push('/dashboard')}
-                className="px-4 py-2 bg-[var(--confetti-400)] hover:bg-[var(--confetti-500)] text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-[var(--confetti-400)] hover:bg-[var(--confetti-500)] text-white rounded-lg transition-colors cursor-pointer"
               >
                 Dashboard
               </button>
@@ -52,8 +52,7 @@ function ResponsiveHeader({ username, router, setUsername, setShowModal }) {
                   setUsername(null);
                   router.refresh();
                 }}
-                className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                style={{ color: 'var(--confetti-700)' }}
+                className="px-4 py-2 text-[var(--confetti-700)] hover:bg-[var(--confetti-100)] rounded-lg transition-colors cursor-pointer"
               >
                 Abmelden
               </button>
@@ -79,7 +78,7 @@ function ResponsiveHeader({ username, router, setUsername, setShowModal }) {
                 setShowModal(true);
               }
             }}
-            className="text-white px-4 py-2 rounded-lg bg-[var(--confetti-400)] hover:bg-[var(--confetti-500)] flex items-center gap-2"
+            className="text-white px-4 py-2 rounded-lg bg-[var(--confetti-400)] hover:bg-[var(--confetti-500)] flex items-center gap-2 cursor-pointer"
           >
             <Plus className="h-5 w-5" />
             <span>Neue Aufgabe</span>

@@ -188,7 +188,7 @@ export default function Dashboard() {
 
           <Link href="/" className="flex-[0_1_auto]">
             <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors text-sm">
-              <Home className="h-4 w-4 shrink-0" />
+              <Home className="h-5 w-5 shrink-0 hover:text-blue-600 transition-colors cursor-pointer" />
               <span className="hidden xs:inline-block truncate">Startseite</span>
             </button>
           </Link>
@@ -200,7 +200,7 @@ export default function Dashboard() {
             }}
             className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors text-sm flex-[0_1_auto]"
           >
-            <LogOut className="h-4 w-4 shrink-0" />
+            <LogOut className="h-5 w-5 shrink-0 hover:text-red-600 transition-colors cursor-pointer"/>
             <span className="hidden xs:inline-block truncate">Abmelden</span>
           </button>
         </div>

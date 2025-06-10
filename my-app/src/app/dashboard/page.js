@@ -13,6 +13,13 @@ export default function Dashboard() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [editedTitle, setEditedTitle] = useState('');
   const [editedDescription, setEditedDescription] = useState('');
+  const [mobileSortOpen, setMobileSortOpen] = useState(false);
+
+  const sortOptions = [
+    { column: 'title', label: 'Titel' },
+    { column: 'created_at', label: 'Erstellt am' },
+    { column: 'status', label: 'Status' }
+  ];
 
   useEffect(() => {
     // Prüfe bei jedem Mount und Fokus-Wechsel
@@ -65,12 +72,13 @@ export default function Dashboard() {
   };
 
   const handleSort = (column) => {
-    if (sortBy === column) {
+    if (column === sortBy) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
       setSortBy(column);
       setSortOrder('asc');
     }
+    setMobileSortOpen(false);
   };
 
   const formatDate = (dateString) => {
@@ -144,26 +152,57 @@ export default function Dashboard() {
 
   return (
     <div className="p-8 min-h-screen" style={{ backgroundColor: 'var(--confetti-50)', color: 'var(--confetti-900)' }}>
-      <header className="flex justify-between items-center mb-8">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-        <div className="flex items-center gap-2 flex-wrap">
-          <Link href="/">
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors text-sm md:text-base">
-              <Home className="h-4 w-4" />
-              <span>Startseite</span>
+      <header className="flex flex-row flex-wrap items-center justify-between gap-3 mb-8">
+        <h1 className="text-xl md:text-2xl font-bold whitespace-nowrap">Dashboard</h1>
+        
+        <div className="flex flex-1 flex-row flex-wrap items-center gap-2 justify-end min-w-[200px]">
+          {/* Mobile Sortier-Dropdown */}
+          <div className="md:hidden relative flex-[1_1_160px]">
+            <button 
+              onClick={() => setMobileSortOpen(!mobileSortOpen)}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors w-full text-sm"
+            >
+              <span className="truncate">{sortOptions.find(o => o.column === sortBy)?.label}</span>
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            {mobileSortOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white rounded shadow-lg">
+                {sortOptions.map(option => (
+                  <button
+                    key={option.column}
+                    onClick={() => {
+                      handleSort(option.column);
+                      setMobileSortOpen(false);
+                    }}
+                    className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                  >
+                    {option.label} {sortBy === option.column && (sortOrder === 'asc' ? '▴' : '▾')}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <Link href="/" className="flex-[0_1_auto]">
+            <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors text-sm">
+              <Home className="h-4 w-4 shrink-0" />
+              <span className="hidden xs:inline-block truncate">Startseite</span>
             </button>
           </Link>
-  
-      <button 
-        onClick={() => {
-          localStorage.removeItem('token');
-          router.push('/login');
-        }}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors text-sm md:text-base"
-      >
-            <LogOut className="h-4 w-4" />
-            <span>Abmelden</span>
-      </button>
+
+          <button 
+            onClick={() => {
+              localStorage.removeItem('token');
+              router.push('/login');
+            }}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors text-sm flex-[0_1_auto]"
+          >
+            <LogOut className="h-4 w-4 shrink-0" />
+            <span className="hidden xs:inline-block truncate">Abmelden</span>
+          </button>
         </div>
       </header>
   
@@ -174,7 +213,7 @@ export default function Dashboard() {
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white rounded shadow" style={{ backgroundColor: 'var(--confetti-100)' }}>
-              <thead>
+              <thead className="hidden md:table-header-group">
                 <tr className="border-b">
                   <th 
                     className="text-left p-4 group cursor-pointer"
@@ -281,11 +320,15 @@ export default function Dashboard() {
               </thead>
               <tbody>
                 {sortedTasks.map((task, index) => (
-                  <tr key={task.id || index} className="bg-gray-50">
-                    <td className="p-4 border-b">{task.title}</td>
-                    <td className="p-4 border-b">{task.description}</td>
-                    <td className="p-4 border-b">
-                      <span className="px-2 py-1 rounded bg-opacity-20" 
+                  <tr key={task.id || index} className="bg-gray-50 block md:table-row mb-4 md:mb-0">
+                    <td className="p-4 block md:table-cell border-b before:content-[attr(data-label)] md:before:content-none before:font-semibold before:mr-2" data-label="Titel">
+                      {task.title}
+                    </td>
+                    <td className="p-4 block md:table-cell border-b before:content-[attr(data-label)] md:before:content-none before:font-semibold before:mr-2" data-label="Beschreibung">
+                      {task.description}
+                    </td>
+                    <td className="p-4 block md:table-cell border-b before:content-[attr(data-label)] md:before:content-none before:font-semibold before:mr-2" data-label="Status">
+                      <span className="px-2 py-1 rounded bg-opacity-20 text-sm" 
                             style={{ 
                               backgroundColor: task.status === 'Erledigt' 
                                 ? 'var(--confetti-400)' 
@@ -295,22 +338,24 @@ export default function Dashboard() {
                         {task.status || 'In Bearbeitung'}
                       </span>
                     </td>
-                    <td className="p-4 border-b">
+                    <td className="p-4 block md:table-cell border-b before:content-[attr(data-label)] md:before:content-none before:font-semibold before:mr-2" data-label="Erstellt am">
                       {task.created_at ? formatDate(task.created_at) : 'N/A'}
                     </td>
-                    <td className="p-4 border-b flex gap-2">
-                      <button 
-                        onClick={() => handleEdit(task)}
-                        className="p-1 hover:text-blue-600 transition-colors cursor-pointer"
-                      >
-                        <SquarePen className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(task.id)}
-                        className="p-1 hover:text-red-600 transition-colors cursor-pointer"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
+                    <td className="p-4 block md:table-cell border-b">
+                      <div className="flex gap-2 justify-end md:justify-start">
+                        <button 
+                          onClick={() => handleEdit(task)}
+                          className="p-1 hover:text-blue-600 transition-colors cursor-pointer"
+                        >
+                          <SquarePen className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(task.id)}
+                          className="p-1 hover:text-red-600 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -323,7 +368,7 @@ export default function Dashboard() {
       {/* Füge Modal hinzu */}
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-gray-500/30 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white/80 p-6 rounded-lg w-96 shadow-xl backdrop-blur-lg border border-white/20">
+          <div className="bg-white/80 p-4 md:p-6 rounded-lg w-11/12 md:w-96 max-w-md">
             <h2 className="text-xl font-bold mb-4">Aufgabe bearbeiten</h2>
             <div className="mb-4">
               <label className="block mb-2">Titel*</label>
@@ -373,6 +418,28 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        @media (max-width: 768px) {
+          tr {
+            display: block;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 1rem;
+          }
+          td {
+            display: block;
+            text-align: right;
+          }
+          td:before {
+            content: attr(data-label);
+            float: left;
+            font-weight: 500;
+          }
+          th {
+            display: none;
+          }
+        }
+      `}</style>
     </div>
   );  
 }

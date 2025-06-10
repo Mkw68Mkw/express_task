@@ -3,8 +3,94 @@ import { useEffect, useState } from 'react';
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
-import { Plus } from 'lucide-react';
+import { Plus, Menu, X } from 'lucide-react';
 import { Toaster, toast } from 'sonner';
+
+function ResponsiveHeader({ username, router, setUsername, setShowModal }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <div className="w-full p-4 bg-white shadow-md">
+      {/* Mobile Hamburger */}
+      <div className="md:hidden flex justify-between items-center">
+        <button
+          className="text-gray-800"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+        <button
+          onClick={() => {
+            if (!username) {
+              toast.error('Bitte melden Sie sich an, um eine neue Aufgabe zu erstellen.');
+            } else {
+              setShowModal(true);
+            }
+          }}
+          className="text-white px-3 py-2 rounded-lg bg-[var(--confetti-400)] hover:bg-[var(--confetti-500)] flex items-center gap-1"
+        >
+          <Plus className="h-5 w-5" />
+          <span>Aufgabe</span>
+        </button>
+      </div>
+
+      {/* Menü für große Bildschirme + ggf. Dropdown bei mobil */}
+      <div className={`mt-4 md:mt-0 md:flex md:justify-between md:items-center ${menuOpen ? 'block' : 'hidden'} md:block`}>
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+          {username ? (
+            <>
+              <span className="text-gray-600">Eingeloggt als: {username}</span>
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="px-4 py-2 bg-[var(--confetti-400)] hover:bg-[var(--confetti-500)] text-white rounded-lg transition-colors"
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  setUsername(null);
+                  router.refresh();
+                }}
+                className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                style={{ color: 'var(--confetti-700)' }}
+              >
+                Abmelden
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => router.push('/login')}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              style={{ backgroundColor: 'var(--confetti-400)' }}
+            >
+              Anmelden
+            </button>
+          )}
+        </div>
+
+        {/* Für größere Screens immer sichtbar */}
+        <div className="hidden md:block mt-4 md:mt-0">
+          <button
+            onClick={() => {
+              if (!username) {
+                toast.error('Bitte melden Sie sich an, um eine neue Aufgabe zu erstellen.');
+              } else {
+                setShowModal(true);
+              }
+            }}
+            className="text-white px-4 py-2 rounded-lg bg-[var(--confetti-400)] hover:bg-[var(--confetti-500)] flex items-center gap-2"
+          >
+            <Plus className="h-5 w-5" />
+            <span>Neue Aufgabe</span>
+          </button>
+        </div>
+      </div>
+
+      <Toaster position="top-right" />
+    </div>
+  );
+}
 
 export default function Home() {
   // State, um die Antwort vom Express-Server zu speichern
@@ -129,55 +215,13 @@ export default function Home() {
   };
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]" style={{ color: 'var(--confetti-900)' }}>
-      <div className="w-full relative">
-        <div className="absolute right-0 top-0 flex items-center gap-4">
-          {username ? (
-            <div className="flex items-center gap-2">
-              <span className="text-gray-600">Eingeloggt als: {username}</span>
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="px-4 py-2 bg-[var(--confetti-400)] hover:bg-[var(--confetti-500)] text-white rounded-lg transition-colors"
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => {
-                  localStorage.removeItem('token');
-                  setUsername(null);
-                  router.refresh();
-                }}
-                className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                style={{ color: 'var(--confetti-700)' }}
-              >
-                Abmelden
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => router.push('/login')}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-              style={{ backgroundColor: 'var(--confetti-400)' }}
-            >
-              Anmelden
-            </button>
-          )}
-        </div>
-        <Toaster position="top-right" />
-        <button 
-          onClick={() => {
-            if (!username) {
-              toast.error('Bitte melden Sie sich an, um eine neue Aufgabe zu erstellen.');
-            } else {
-              setShowModal(true);
-            }
-          }}
-          className="text-white px-4 py-2 rounded-lg bg-[var(--confetti-400)] hover:bg-[var(--confetti-500)] flex items-center gap-2"
-        >
-          <Plus className="h-5 w-5" />
-          <span>Neue Aufgabe</span>
-        </button>
-      </div>
+    <div className="grid grid-rows-[auto_1fr_20px] items-center justify-items-center min-h-screen pt-8 px-8 pb-20 gap-8 font-[family-name:var(--font-geist-sans)]" style={{ color: 'var(--confetti-900)' }}>
+      <ResponsiveHeader 
+        username={username}
+        router={router}
+        setUsername={setUsername}
+        setShowModal={setShowModal}
+      />
 
       {showModal && (
         <div className="fixed inset-0 z-50 bg-gray-500/30 backdrop-blur-md flex items-center justify-center">

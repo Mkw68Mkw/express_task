@@ -180,8 +180,8 @@ export default function Home() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-gray-500/30 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white/80 p-6 rounded-lg w-96 shadow-xl backdrop-blur-lg border border-white/20">
+        <div className="fixed inset-0 z-50 bg-gray-500/30 backdrop-blur-md flex items-center justify-center">
+          <div className="bg-white/80 p-6 rounded-lg w-96 shadow-xl backdrop-blur-lg border border-white/20 transform transition-all">
             <h2 className="text-xl font-bold mb-4">Neue Aufgabe</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
@@ -236,54 +236,41 @@ export default function Home() {
 
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         {data.length > 0 && (
-          <div className="w-full max-w-2xl">
-            <h2 className="text-lg font-bold mb-4">Tasks:</h2>
-            <ul className="space-y-2">
+          <div className="w-full max-w-6xl">
+            <h2 className="text-lg font-bold mb-6">Aufgaben:</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {data.map(task => (
-                <li key={task.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex-1">
-                    <h3 className="font-medium">{task.title}</h3>
-                    {task.description && <p className="text-gray-600 text-sm">{task.description}</p>}
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        task.status === 'done' ? 'bg-green-100 text-green-800' :
-                        task.status === 'in progress' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-blue-100 text-blue-800'
-                      }`}>
-                        {task.status}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {new Date(task.created_at).toLocaleDateString()}
-                      </span>
+                <div key={task.id} className="group relative bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
+                  <div className="flex flex-col h-full">
+                    <h3 className="text-lg font-semibold mb-2">{task.title}</h3>
+                    {task.description && (
+                      <p className="text-gray-600 mb-4 flex-1">{task.description}</p>
+                    )}
+                    <div className="mt-auto space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className={`px-3 py-1 text-sm rounded-full ${
+                          task.status === 'done' ? 'bg-green-100 text-green-800' :
+                          task.status === 'in progress' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {task.status}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(task.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-2 ml-4">
-                    <button
-                      onClick={() => {
-                        setEditingTask(task);
-                        setShowEditModal(true);
-                      }}
-                      className="p-2 text-gray-500 hover:text-blue-600 transition-transform duration-200 hover:scale-125"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      onClick={() => handleDelete(task.id)}
-                      className="p-2 text-gray-500 hover:text-red-600 transition-transform duration-200 hover:scale-125"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </main>
 
       {showEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-96">
+        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-md flex items-center justify-center">
+          <div className="bg-white/80 p-6 rounded-lg w-96 shadow-xl backdrop-blur-lg border border-white/20 transform transition-all">
             <h2 className="text-xl font-bold mb-4">Aufgabe bearbeiten</h2>
             <form onSubmit={handleUpdate}>
               <div className="mb-4">

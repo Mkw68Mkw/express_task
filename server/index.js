@@ -147,7 +147,7 @@ app.post('/login', async (req, res) => {
     const token = jwt.sign(
       { userId: user.id, username: user.username },
       process.env.JWT_SECRET,
-      { expiresIn: '1m' }
+      { expiresIn: '1h' }
     );
 
     res.json({ token, username: user.username });
@@ -186,7 +186,7 @@ app.post('/signup', async (req, res) => {
     const token = jwt.sign(
       { userId: newUser.id, username: newUser.username },
       process.env.JWT_SECRET,
-      { expiresIn: '1m' }
+      { expiresIn: '1h' }
     );
 
     res.status(201).json({ 

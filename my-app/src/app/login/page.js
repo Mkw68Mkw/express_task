@@ -41,7 +41,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4" style={{ backgroundColor: 'var(--confetti-50)', color: 'var(--confetti-900)' }}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4" style={{ color: 'var(--confetti-900)' }}>
       <div className="absolute top-4 left-4">
         <button
           onClick={() => router.push('/')}
@@ -52,7 +52,7 @@ export default function LoginPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8" style={{ backgroundColor: 'var(--confetti-100)' }}>
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-[var(--confetti-950)] mb-2 text-center">Willkommen zurück</h1>
           <p className="text-[var(--confetti-800)] text-center">Melden Sie sich an, um fortzufahren</p>

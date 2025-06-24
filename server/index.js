@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());  // Um JSON-Daten im Body zu verarbeiten
 
 const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
+  const token = req.headers.authorization?.split(' ')[1]; //index 1 = teil 2 des headers
   
   if (!token) {
     return res.status(401).json({ error: 'Nicht autorisiert' });
@@ -147,7 +147,7 @@ app.post('/login', async (req, res) => {
     const token = jwt.sign(
       { userId: user.id, username: user.username },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '1m' }
     );
 
     res.json({ token, username: user.username });

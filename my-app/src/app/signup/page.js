@@ -44,22 +44,21 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4" style={{ backgroundColor: 'var(--confetti-50)', color: 'var(--confetti-900)' }}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4" style={{ color: 'var(--confetti-900)' }}>
       <div className="absolute top-4 left-4">
         <button
           onClick={() => router.push('/')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 bg-transparent p-2 rounded-lg transition-colors"
-          style={{ color: 'var(--confetti-700)' }}
+          className="flex items-center gap-2 text-[var(--confetti-900)] hover:text-[var(--confetti-500)] bg-transparent p-2 rounded-lg transition-colorsm cursor-pointer"
         >
           <ArrowLeft className="h-5 w-5" />
           <span className="text-sm font-medium">Zurück</span>
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8" style={{ backgroundColor: 'var(--confetti-100)' }}>
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
         <div className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Neues Konto erstellen</h1>
-          <p className="text-gray-500">Registrieren Sie sich, um loszulegen</p>
+          <h1 className="text-3xl font-bold text-[var(--confetti-950)] mb-2 text-center">Konto erstellen</h1>
+          <p className="text-[var(--confetti-800)] text-center">Registrieren Sie sich für ein neues Konto</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -114,8 +113,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: 'var(--confetti-400)' }}
+            className="w-full bg-[var(--confetti-400)] text-white py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--confetti-500)] cursor-pointer"
           >
             {isLoading ? 'Registrierung läuft...' : 'Registrieren'}
           </button>
@@ -129,7 +127,7 @@ export default function SignupPage() {
               className="text-indigo-600 hover:text-indigo-800 font-medium"
               style={{ color: 'var(--confetti-700)' }}
             >
-              Zum Login
+              Anmelden
             </a>
           </p>
         </div>

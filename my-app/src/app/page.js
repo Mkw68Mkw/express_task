@@ -60,7 +60,7 @@ function ResponsiveHeader({ username, router, setUsername, setShowModal }) {
           ) : (
             <button
               onClick={() => router.push('/login')}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer"
               style={{ backgroundColor: 'var(--confetti-400)' }}
             >
               Anmelden
@@ -134,16 +134,33 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const checkAuth = () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setUsername(null);
+        return;
+      }
+
       try {
         const decoded = jwtDecode(token);
+        // Check token expiration
+        if (decoded.exp * 1000 < Date.now()) {
+          localStorage.removeItem('token');
+          setUsername(null);
+          return;
+        }
         setUsername(decoded.username);
       } catch (error) {
         console.error('Invalid token:', error);
         localStorage.removeItem('token');
+        setUsername(null);
+        router.refresh();
       }
-    }
+    };
+
+    checkAuth();
+    window.addEventListener('focus', checkAuth);
+    return () => window.removeEventListener('focus', checkAuth);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -172,44 +189,6 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error creating task:', error);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:3001/tasks/${id}`, {
-        method: 'DELETE'
-      });
-      
-      if (response.ok) {
-        const newData = data.filter(task => task.id !== id);
-        setData(newData);
-      }
-    } catch (error) {
-      console.error('Error deleting task:', error);
-    }
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`http://localhost:3001/tasks/${editingTask.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editingTask),
-      });
-      
-      if (response.ok) {
-        setShowEditModal(false);
-        const updatedData = data.map(task => 
-          task.id === editingTask.id ? {...editingTask} : task
-        );
-        setData(updatedData);
-      }
-    } catch (error) {
-      console.error('Error updating task:', error);
     }
   };
 
@@ -310,61 +289,6 @@ export default function Home() {
           </div>
         )}
       </main>
-
-      {showEditModal && (
-        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-md flex items-center justify-center">
-          <div className="bg-white/80 p-6 rounded-lg w-96 shadow-xl backdrop-blur-lg border border-white/20 transform transition-all">
-            <h2 className="text-xl font-bold mb-4">Aufgabe bearbeiten</h2>
-            <form onSubmit={handleUpdate}>
-              <div className="mb-4">
-                <label className="block mb-2">Titel*</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full p-2 border rounded"
-                  value={editingTask.title}
-                  onChange={(e) => setEditingTask({...editingTask, title: e.target.value})}
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2">Beschreibung</label>
-                <textarea
-                  className="w-full p-2 border rounded"
-                  value={editingTask.description}
-                  onChange={(e) => setEditingTask({...editingTask, description: e.target.value})}
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2">Status</label>
-                <select
-                  className="w-full p-2 border rounded"
-                  value={editingTask.status}
-                  onChange={(e) => setEditingTask({...editingTask, status: e.target.value})}
-                >
-                  <option value="open">Offen</option>
-                  <option value="in progress">In Bearbeitung</option>
-                  <option value="done">Erledigt</option>
-                </select>
-              </div>
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2 text-gray-500 hover:text-gray-700"
-                >
-                  Abbrechen
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Aktualisieren
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

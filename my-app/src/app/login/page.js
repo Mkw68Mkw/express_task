@@ -45,7 +45,7 @@ export default function LoginPage() {
       <div className="absolute top-4 left-4">
         <button
           onClick={() => router.push('/')}
-          className="flex items-center gap-2 text-[var(--confetti-900)] hover:text-[var(--confetti-500)] bg-transparent p-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 text-[var(--confetti-900)] hover:text-[var(--confetti-500)] bg-transparent p-2 rounded-lg transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-5 w-5" />
           <span className="text-sm font-medium">Zurück</span>
@@ -94,7 +94,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-[var(--confetti-400)] text-white py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--confetti-500)]"
+            className="w-full bg-[var(--confetti-400)] text-white py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--confetti-500)] cursor-pointer"
           >
             {isLoading ? 'Anmeldung läuft...' : 'Anmelden'}
           </button>

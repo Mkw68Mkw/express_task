@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
 const port = 3001; // Backend läuft auf Port 3001
-const serverless = require('serverless-http');  // Add this at the top
 
 // CORS-Middleware hinzufügen
 app.use(cors());
@@ -225,12 +224,6 @@ app.get('/user/tasks', authMiddleware, (req, res) => {
     });
 });
 
-// Export the Express app wrapped in serverless-http
-module.exports.handler = serverless(app);
-
-// Only start the server when running locally
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, '0.0.0.0', () => {
-    console.log(`Server läuft auf http://localhost:${port}`);
-  });
-}
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server läuft auf http://localhost:${port}`);
+});

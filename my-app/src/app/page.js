@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useState } from 'react';
-import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
 import { Plus, Menu, X } from 'lucide-react';
@@ -104,13 +103,15 @@ export default function Home() {
   const [editingTask, setEditingTask] = useState(null);
   const router = useRouter();
   const [username, setUsername] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // useEffect, um beim Laden der Seite die API anzufragen
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('http://localhost:3001', {
+        const response = await fetch('https://xpresstask-server.onrender.com/', {
           headers: token ? {
             Authorization: `Bearer ${token}`
           } : {}
@@ -119,7 +120,8 @@ export default function Home() {
         if (response.status === 401) {
           localStorage.removeItem('token');
           setUsername(null);
-          return
+          setLoading(false);
+          return;
         }
         
         const result = await response.json();
@@ -127,6 +129,8 @@ export default function Home() {
       } catch (error) {
         console.error('Error fetching data:', error);
         setData([]);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -167,7 +171,7 @@ export default function Home() {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('http://localhost:3001/tasks', {
+      const response = await fetch('https://xpresstask-server.onrender.com/tasks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -179,7 +183,7 @@ export default function Home() {
       if (response.ok) {
         setShowModal(false);
         // Daten neu laden
-        const result = await fetch('http://localhost:3001', {
+        const result = await fetch('https://xpresstask-server.onrender.com', {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -257,12 +261,17 @@ export default function Home() {
       )}
 
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        {data.length > 0 && (
+        <h1 className="text-3xl font-bold text-center sm:text-left mb-6">
+          Willkommen bei XpressTask
+        </h1>
+        {loading ? (
+          <div className="text-gray-500">Tasks werden geladen...</div>
+        ) : data.length > 0 ? (
           <div className="w-full max-w-6xl">
-            <h2 className="text-lg font-bold mb-6">Aufgaben:</h2>
+            <h2 className="text-xl font-bold mb-6">Aufgaben:</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {data.map(task => (
-                <div key={task.id} className="group relative bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
+                <div key={task.id} className="group relative bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-100 cursor-pointer">
                   <div className="flex flex-col h-full">
                     <h3 className="text-lg font-semibold mb-2">{task.title}</h3>
                     {task.description && (
@@ -275,7 +284,11 @@ export default function Home() {
                           task.status === 'in progress' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-blue-100 text-blue-800'
                         }`}>
-                          {task.status}
+                          {{
+                            'open': 'Offen',
+                            'in progress': 'In Bearbeitung',
+                            'done': 'Erledigt'
+                          }[task.status]}
                         </span>
                         <span className="text-xs text-gray-500">
                           {new Date(task.created_at).toLocaleDateString()}
@@ -287,6 +300,8 @@ export default function Home() {
               ))}
             </div>
           </div>
+        ) : (
+          <div className="text-gray-500">Keine Aufgaben gefunden.</div>
         )}
       </main>
     </div>

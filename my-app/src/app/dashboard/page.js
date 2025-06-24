@@ -46,7 +46,7 @@ export default function Dashboard() {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/user/tasks', {
+      const response = await fetch('https://xpresstask-server.onrender.com/user/tasks', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -109,7 +109,7 @@ export default function Dashboard() {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/tasks/${selectedTask.id}`, {
+      const response = await fetch(`https://xpresstask-server.onrender.com/tasks/${selectedTask.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

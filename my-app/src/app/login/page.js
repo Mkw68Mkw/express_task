@@ -1,13 +1,14 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -16,7 +17,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3001/login', {
+      const response = await fetch('https://xpresstask-server.onrender.com/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,13 +77,28 @@ export default function LoginPage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Passwort
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent pr-12"
+                required
+              />
+              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="h-full flex items-center text-gray-500 hover:text-gray-700 focus:outline-none px-2 cursor-pointer"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
 
           {error && (
@@ -101,13 +117,6 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-8 text-center">
-          <a 
-            href="#" 
-            className="text-indigo-600 hover:text-indigo-800 text-sm"
-            style={{ color: 'var(--confetti-700)' }}
-          >
-            Passwort vergessen?
-          </a>
           
           <p className="mt-4 text-gray-500 text-sm">
             Noch kein Konto?{' '}

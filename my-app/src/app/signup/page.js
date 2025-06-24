@@ -21,7 +21,7 @@ export default function SignupPage() {
 
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/signup', {
+      const response = await fetch('https://xpresstask-server.onrender.com/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
